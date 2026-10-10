@@ -1,0 +1,9 @@
+# NatureBuddy AI - Python Backend Dependencies
+# Required for running the optional Python FastAPI backend proxy (backend/app.py).
+# Note: Main frontend uses Node.js/npm dependencies specified in package.json.
+
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+requests>=2.28.0
+
