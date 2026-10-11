@@ -8,6 +8,11 @@ audioread>=3.0.0
 pydub>=0.25.0
 soundfile>=0.12.0
 resampy>=0.4.0
-tensorflow>=2.15.0
+numpy>=1.24.0,<2.0.0; sys_platform == 'linux'
+tflite-runtime==2.14.0; sys_platform == 'linux'
+numpy>=1.24.0; sys_platform != 'linux'
+tensorflow-cpu>=2.15.0; sys_platform != 'linux'
+
+
 
 
