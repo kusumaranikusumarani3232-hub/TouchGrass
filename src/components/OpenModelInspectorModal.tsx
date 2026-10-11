@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Cpu, ShieldCheck, Check, Key, Server, X } from 'lucide-react';
 import type { AIProviderConfig } from '../types';
 import { saveAIConfig } from '../utils/storage';
+import { getFastApiUrl } from '../utils/apiUrl';
 
 interface OpenModelInspectorModalProps {
   isOpen: boolean;
@@ -27,7 +28,8 @@ export const OpenModelInspectorModal: React.FC<OpenModelInspectorModalProps> = (
     const newConfig: AIProviderConfig = {
       provider: activeProvider,
       hfApiKey,
-      ollamaUrl
+      ollamaUrl,
+      fastapiUrl: config.fastapiUrl
     };
     setConfig(newConfig);
     saveAIConfig(newConfig);
@@ -172,7 +174,7 @@ export const OpenModelInspectorModal: React.FC<OpenModelInspectorModalProps> = (
               The Groq API key is managed securely on the server using the <code className="text-lime-300 font-mono">GROQ_API_KEY</code> environment variable. No API key is stored in your browser or exposed to frontend code.
             </p>
             <p className="text-[10px] text-emerald-300/70">
-              Model: <strong className="text-white font-mono">qwen/qwen3.8-27b</strong> (via Python FastAPI backend proxy at http://localhost:8000)
+              Model: <strong className="text-white font-mono">qwen/qwen3.8-27b</strong> (via Python FastAPI backend proxy at {getFastApiUrl(config.fastapiUrl)})
             </p>
           </div>
         )}

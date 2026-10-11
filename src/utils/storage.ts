@@ -1,5 +1,6 @@
 import type { UserProgress, JournalEntry, AIProviderConfig } from '../types';
 import { INITIAL_BADGES } from '../data/missions';
+import { getFastApiUrl } from './apiUrl';
 
 const STORAGE_KEY_PROGRESS = 'naturebuddy_user_progress_v1';
 const STORAGE_KEY_CONFIG = 'naturebuddy_ai_config_v1';
@@ -94,7 +95,9 @@ export const getAIConfig = (): AIProviderConfig => {
   try {
     const data = localStorage.getItem(STORAGE_KEY_CONFIG);
     if (data) {
-      return JSON.parse(data);
+      const parsed = JSON.parse(data);
+      parsed.fastapiUrl = getFastApiUrl(parsed.fastapiUrl);
+      return parsed;
     }
   } catch (e) {
     console.error('Failed to parse AI config', e);
@@ -105,13 +108,17 @@ export const getAIConfig = (): AIProviderConfig => {
     hfApiKey: '',
     groqApiKey: '',
     ollamaUrl: 'http://localhost:11434',
-    fastapiUrl: 'http://localhost:8000'
+    fastapiUrl: getFastApiUrl()
   };
 };
 
 export const saveAIConfig = (config: AIProviderConfig): void => {
   try {
-    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(config));
+    const sanitized: AIProviderConfig = {
+      ...config,
+      fastapiUrl: getFastApiUrl(config.fastapiUrl)
+    };
+    localStorage.setItem(STORAGE_KEY_CONFIG, JSON.stringify(sanitized));
   } catch (e) {
     console.error('Failed to save AI config', e);
   }

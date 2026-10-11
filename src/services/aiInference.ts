@@ -1,4 +1,5 @@
 import type { AIAnalysisResult, AIProviderConfig } from '../types';
+import { getFastApiUrl } from '../utils/apiUrl';
 
 /**
  * Open-Weight AI Inference Engine for NatureBuddy AI
@@ -22,13 +23,14 @@ export async function analyzeNatureImage(
   config: AIProviderConfig
 ): Promise<AIAnalysisResult> {
   const startTime = performance.now();
+  const resolvedFastapiUrl = getFastApiUrl(config.fastapiUrl);
 
   // ── Explicit provider routes (errors surface to caller, no silent BLIP fallback) ──
   if (config.provider === 'groq') {
     return await callGroqVisionAPI(
       imageDataBase64,
       missionPrompt,
-      config.fastapiUrl || 'http://localhost:8000',
+      resolvedFastapiUrl,
       startTime
     );
   }
@@ -50,7 +52,7 @@ export async function analyzeNatureImage(
     return await callFastAPIBackend(
       imageDataBase64,
       missionPrompt,
-      config.fastapiUrl || 'http://localhost:8000',
+      resolvedFastapiUrl,
       startTime
     );
   }
@@ -162,7 +164,7 @@ async function callGroqVisionAPI(
   } catch (err) {
     if ((err as Error).message.includes('Groq is not configured')) throw err;
     throw new Error(
-      `Cannot reach FastAPI backend at ${fastapiUrl}. Run: cd backend && uvicorn app:app --reload`
+      `Cannot reach FastAPI backend at ${fastapiUrl}. ${fastapiUrl.includes('localhost') ? 'Run: cd backend && uvicorn app:app --reload' : 'Please verify that the backend service on Render is running.'}`
     );
   }
 

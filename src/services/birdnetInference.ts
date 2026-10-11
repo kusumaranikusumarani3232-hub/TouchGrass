@@ -1,4 +1,5 @@
 import type { AIAnalysisResult, AIProviderConfig } from '../types';
+import { getFastApiUrl } from '../utils/apiUrl';
 
 /**
  * BirdNET Audio Recognition Inference Service
@@ -10,7 +11,7 @@ export async function analyzeBirdAudio(
   config: AIProviderConfig
 ): Promise<AIAnalysisResult> {
   const startTime = performance.now();
-  const fastapiUrl = config.fastapiUrl || 'http://localhost:8000';
+  const fastapiUrl = getFastApiUrl(config?.fastapiUrl);
 
   let response: Response;
   try {
@@ -24,7 +25,7 @@ export async function analyzeBirdAudio(
     });
   } catch (err) {
     throw new Error(
-      `Cannot reach FastAPI backend at ${fastapiUrl}. Make sure the backend server is running (cd backend && uvicorn app:app --reload).`
+      `Cannot reach FastAPI backend at ${fastapiUrl}. ${fastapiUrl.includes('localhost') ? 'Make sure the backend server is running (cd backend && uvicorn app:app --reload).' : 'Please check your internet connection or verify the backend service status.'}`
     );
   }
 
